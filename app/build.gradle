@@ -53,12 +53,14 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0-alpha1'
     implementation 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.0.0-alpha1'
 
-    implementation 'android.arch.navigation:navigation-common-ktx:1.0.0-alpha01'
-    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha01'
-    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha01'
+    implementation 'android.arch.navigation:navigation-common-ktx:1.0.0-alpha02'
+    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha02'
+    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha02'
 
-    implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha01'
-    implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha01'
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha02'
+    implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha02'
+
+    implementation project(":todo-api")
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'

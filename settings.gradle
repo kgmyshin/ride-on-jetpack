@@ -1,1 +1,4 @@
 include ':app'
+
+include ':todo-api'
+project(':todo-api').projectDir = new File("modules/todo-api")
