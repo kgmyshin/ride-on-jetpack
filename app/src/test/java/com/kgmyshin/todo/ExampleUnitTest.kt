@@ -1,4 +1,4 @@
-package com.kgmyshin.myapplication
+package com.kgmyshin.todo
 
 import org.junit.Test
 

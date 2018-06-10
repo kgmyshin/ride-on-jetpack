@@ -1,4 +1,4 @@
-package com.kgmyshin.myapplication.ui.main
+package com.kgmyshin.todo.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.kgmyshin.myapplication.R
+import com.kgmyshin.todo.R
 
 class MainFragment : Fragment() {
 

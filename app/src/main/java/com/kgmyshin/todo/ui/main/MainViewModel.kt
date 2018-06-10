@@ -1,4 +1,4 @@
-package com.kgmyshin.myapplication.ui.main
+package com.kgmyshin.todo.ui.main
 
 import androidx.lifecycle.ViewModel
 
