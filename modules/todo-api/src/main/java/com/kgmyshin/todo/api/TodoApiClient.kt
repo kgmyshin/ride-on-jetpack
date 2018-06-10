@@ -12,6 +12,8 @@ class TodoApiClient {
 
     fun getTodoList(): List<TodoJson> = todoList
 
+    fun getTodo(todoId: String): TodoJson? = todoList.find { it.id == todoId }
+
     fun createTodo(todo: TodoJson) = todoList.add(todo)
 
     fun removeTodo(todoId: String) = todoList.removeIf { it.id == todoId }
