@@ -1,5 +1,6 @@
 package com.kgmyshin.todo.infra.repository
 
+import android.util.LruCache
 import com.kgmyshin.todo.api.TodoApiClient
 import com.kgmyshin.todo.domain.Todo
 import com.kgmyshin.todo.domain.TodoId
@@ -8,25 +9,54 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 
 class TodoRepositoryImpl(
-        val todoApiClient: TodoApiClient
+        private val todoApiClient: TodoApiClient
 ) : TodoRepository {
 
-    override fun findById(todoId: TodoId): Maybe<Todo> = Maybe.create { emitter ->
-        val todoJson = todoApiClient.getTodo(todoId.value)
-        if (todoJson != null) {
-            emitter.onSuccess(TodoConverter.convertToModel(todoJson))
-        } else {
-            emitter.onComplete()
+    private val idCache = LruCache<TodoId, Todo>(1000)
+    private val pageCache = LruCache<Int, List<Todo>>(1000)
+
+    override fun findById(todoId: TodoId): Maybe<Todo> = if (idCache[todoId] == null) {
+        todoApiClient.getTodo(todoId.value).toMaybe().map {
+            TodoConverter.convertToModel(it)
+        }.doOnSuccess {
+            idCache.put(it.id, it)
         }
+    } else {
+        Maybe.just(idCache[todoId])
     }
 
-    override fun findAll(): Single<List<Todo>> = Single.fromCallable {
-        todoApiClient.getTodoList().let { TodoConverter.convertToModel(it) }
+    override fun findAllByPage(page: Int): Single<List<Todo>> = if (pageCache[page] == null) {
+
+        todoApiClient.getTodoList(page)
+                .map { TodoConverter.convertToModel(it) }
+                .doOnSuccess {
+                    pageCache.put(
+                            page,
+                            it
+                    )
+                    it.forEach {
+                        idCache.put(it.id, it)
+                    }
+                }
+    } else {
+        Single.just(pageCache[page])
     }
 
-    override fun store(todo: Todo): Single<Todo> = Single.fromCallable {
-        todoApiClient.updateTodo(TodoConverter.convertToJson(todo))
-        todo
-    }
+    override fun store(todo: Todo): Single<Todo> =
+            todoApiClient.updateTodo(TodoConverter.convertToJson(todo))
+                    .map { TodoConverter.convertToModel(it) }
+                    .doOnSuccess { stored ->
+                        idCache.put(stored.id, stored)
+                        pageCache.snapshot().keys.forEach { page ->
+                            val pageList = pageCache[page].toMutableList()
+                            if (pageList.any { it.id == stored.id }) {
+                                pageList[pageList.indexOf(stored)] = stored
+                                pageCache.put(
+                                        page,
+                                        pageList
+                                )
+                            }
+                        }
+                    }
 
 }

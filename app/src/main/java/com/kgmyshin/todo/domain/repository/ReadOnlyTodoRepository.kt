@@ -9,6 +9,6 @@ interface ReadOnlyTodoRepository {
 
     fun findById(todoId: TodoId): Maybe<Todo>
 
-    fun findAll(): Single<List<Todo>>
+    fun findAllByPage(page: Int): Single<List<Todo>>
 
 }
