@@ -60,6 +60,12 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha02'
     implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha02'
 
+    implementation("androidx.paging:paging-runtime:2.0.0-alpha1") {
+        exclude group: 'androidx.recyclerview', module: 'recyclerview'
+    }
+
+    implementation "androidx.recyclerview:recyclerview:1.0.0-alpha3"
+
     implementation project(":todo-api")
 
     testImplementation 'junit:junit:4.12'

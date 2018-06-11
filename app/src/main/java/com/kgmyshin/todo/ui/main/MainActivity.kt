@@ -1,8 +1,8 @@
-package com.kgmyshin.todo
+package com.kgmyshin.todo.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.kgmyshin.todo.ui.main.MainFragment
+import com.kgmyshin.todo.R
 
 class MainActivity : AppCompatActivity() {
 
