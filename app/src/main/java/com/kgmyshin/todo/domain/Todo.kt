@@ -6,5 +6,15 @@ class Todo(
         id: TodoId,
         val name: String,
         val description: String,
-        val done: Boolean
-) : Entity<TodoId>(id)
+        private var done: Boolean
+) : Entity<TodoId>(id) {
+
+    fun done() {
+        done = true
+    }
+
+    fun undone() {
+        done = false
+    }
+
+}
