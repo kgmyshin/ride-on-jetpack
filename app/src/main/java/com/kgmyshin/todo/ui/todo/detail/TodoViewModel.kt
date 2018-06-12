@@ -2,16 +2,71 @@ package com.kgmyshin.todo.ui.todo.detail
 
 import androidx.lifecycle.ViewModel
 import com.kgmyshin.todo.domain.TodoId
+import com.kgmyshin.todo.usecase.todo.DoneTodoUseCase
+import com.kgmyshin.todo.usecase.todo.UndoneTodoUseCase
+import io.reactivex.Scheduler
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 
 class TodoViewModel(
         todoId: TodoId,
-        todoLiveDataFactory: TodoLiveDataFactory
+        private val doneTodoUseCase: DoneTodoUseCase,
+        private val undoneTodoUseCase: UndoneTodoUseCase,
+        todoLiveDataFactory: TodoLiveDataFactory,
+        private val uiScheduler: Scheduler
 ) : ViewModel() {
 
     private val todoLiveData = todoLiveDataFactory.create(todoId)
 
-    fun done() = todoLiveData.done()
+    private val disposables = CompositeDisposable()
 
-    fun undone() = todoLiveData.undone()
+    fun done() {
+        todoLiveData.value?.let { todo ->
+            if (todo.done) {
+                return
+            }
+            doneTodoUseCase.execute(todo.id)
+                    .subscribeOn(uiScheduler)
+                    .doOnSubscribe {
+                        todoLiveData.value = todo.copy(done = true)
+                    }
+                    .doOnError {
+                        todoLiveData.value = todo.copy(done = false)
+                    }
+                    .subscribeBy(
+                            onError = {
+                                TODO("エラーハンドリング")
+                            }
+                    )
+                    .addTo(disposables)
+        }
+    }
 
+    fun undone() {
+        todoLiveData.value?.let { todo ->
+            if (todo.done) {
+                return
+            }
+            undoneTodoUseCase.execute(todo.id)
+                    .subscribeOn(uiScheduler)
+                    .doOnSubscribe {
+                        todoLiveData.value = todo.copy(done = false)
+                    }
+                    .doOnError {
+                        todoLiveData.value = todo.copy(done = true)
+                    }
+                    .subscribeBy(
+                            onError = {
+                                TODO("エラーハンドリング")
+                            }
+                    )
+                    .addTo(disposables)
+        }
+    }
+
+    override fun onCleared() {
+        disposables.clear()
+        super.onCleared()
+    }
 }
