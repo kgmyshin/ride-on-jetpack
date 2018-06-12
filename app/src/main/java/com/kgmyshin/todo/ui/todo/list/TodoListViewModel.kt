@@ -35,9 +35,9 @@ class TodoListViewModel(
                     .build()
     ).build()
 
-    private val snapshotTodoList = MutableLiveData<List<TodoBindingModel>>()
+    private val snapshotTodoList = MutableLiveData<PagedList<TodoBindingModel>>()
 
-    val todoList = MediatorLiveData<List<TodoBindingModel>>().apply {
+    val todoList = MediatorLiveData<PagedList<TodoBindingModel>>().apply {
         addSource(originalTodoList, { newValue ->
             value = newValue
         })
@@ -50,7 +50,8 @@ class TodoListViewModel(
         doneTodoUseCase.execute(todoId)
                 .subscribeOn(uiScheduler)
                 .doOnSubscribe {
-                    val snapshot = originalTodoList.value?.snapshot() ?: return@doOnSubscribe
+                    val snapshot = (originalTodoList.value?.snapshot() as? PagedList<TodoBindingModel>)
+                            ?: return@doOnSubscribe
                     val target = snapshot.find { it.id == todoId } ?: return@doOnSubscribe
                     snapshot[snapshot.indexOf(target)] = target.copy(done = true)
                     snapshotTodoList.value = snapshot
@@ -70,7 +71,8 @@ class TodoListViewModel(
         undoneTodoUseCase.execute(todoId)
                 .subscribeOn(uiScheduler)
                 .doOnSubscribe {
-                    val snapshot = originalTodoList.value?.snapshot() ?: return@doOnSubscribe
+                    val snapshot = (originalTodoList.value?.snapshot() as? PagedList<TodoBindingModel>)
+                            ?: return@doOnSubscribe
                     val target = snapshot.find { it.id == todoId } ?: return@doOnSubscribe
                     snapshot[snapshot.indexOf(target)] = target.copy(done = false)
                     snapshotTodoList.value = snapshot

@@ -22,7 +22,7 @@ object TodoConverter {
                     id = todo.id.value,
                     name = todo.name,
                     description = todo.description,
-                    done = todo.done
+                    done = todo.hasDone()
             )
 
 }

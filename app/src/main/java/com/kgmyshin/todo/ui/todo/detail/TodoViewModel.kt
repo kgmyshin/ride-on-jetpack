@@ -17,7 +17,7 @@ class TodoViewModel(
         private val uiScheduler: Scheduler
 ) : ViewModel() {
 
-    private val todoLiveData = todoLiveDataFactory.create(todoId)
+    val todoLiveData = todoLiveDataFactory.create(todoId)
 
     private val disposables = CompositeDisposable()
 

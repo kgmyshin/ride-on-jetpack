@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.kgmyshin.todo.databinding.FragmentTodoBinding
 import com.kgmyshin.todo.domain.TodoId
 import com.kgmyshin.todo.injector.Injectors
 
@@ -16,8 +17,13 @@ class TodoFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        val binding = FragmentTodoBinding.inflate(
+                inflater,
+                container,
+                false
+        )
         val factory = TodoViewModelFactory(
-                todoId = TodoId("aaa"),
+                todoId = TodoId(TodoFragmentArgs.fromBundle(arguments).id),
                 readOnlyTodoRepository = Injectors.readOnlyRepository,
                 doneTodoUseCase = Injectors.doneTodoUseCase,
                 undoneTodoUseCase = Injectors.undoneTodoUseCase,
@@ -27,10 +33,7 @@ class TodoFragment : Fragment() {
                 this,
                 factory
         ).get(TodoViewModel::class.java)
-        return super.onCreateView(
-                inflater,
-                container
-                , savedInstanceState
-        )
+        binding.viewModel = viewModel
+        return binding.root
     }
 }

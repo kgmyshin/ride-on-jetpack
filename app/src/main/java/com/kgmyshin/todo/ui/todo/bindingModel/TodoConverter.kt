@@ -12,7 +12,7 @@ object TodoConverter {
                     todo.id,
                     todo.name,
                     todo.description,
-                    todo.done
+                    todo.hasDone()
             )
 
 }

@@ -1,12 +1,26 @@
 package com.kgmyshin.todo.ui.todo.list
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 
-class TodoListAdapter : PagedListAdapter<TodoBindingModel, RecyclerView.ViewHolder>(DIFF_ITEM_CALL_BACK) {
+class TodoListAdapter : PagedListAdapter<TodoBindingModel, TodoViewHolder>(DIFF_ITEM_CALL_BACK) {
+
+    override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+    ): TodoViewHolder = TodoViewHolder.create(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+    )
+
+
+    override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
+        getItem(position)?.let { holder.bindTo(it) }
+    }
 
     companion object {
         private val DIFF_ITEM_CALL_BACK = object : DiffUtil.ItemCallback<TodoBindingModel>() {
@@ -20,14 +34,7 @@ class TodoListAdapter : PagedListAdapter<TodoBindingModel, RecyclerView.ViewHold
                     newItem: TodoBindingModel
             ): Boolean = oldItem == newItem
         }
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 }

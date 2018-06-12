@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.kgmyshin.todo.databinding.FragmentTodoListBinding
 import com.kgmyshin.todo.injector.Injectors
 
 class TodoListFragment : Fragment() {
@@ -15,6 +17,11 @@ class TodoListFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        val binding = FragmentTodoListBinding.inflate(
+                inflater,
+                container,
+                false
+        )
         val factory = TodoListViewModelFactory(
                 readOnlyTodoRepository = Injectors.readOnlyRepository,
                 doneTodoUseCase = Injectors.doneTodoUseCase,
@@ -25,6 +32,14 @@ class TodoListFragment : Fragment() {
                 this,
                 factory
         ).get(TodoListViewModel::class.java)
-        return super.onCreateView(inflater, container, savedInstanceState)
+        val adapter = TodoListAdapter()
+        binding.recyclerView.adapter = adapter
+        viewModel.todoList.observe(
+                this,
+                Observer { bindingModelList ->
+                    adapter.submitList(bindingModelList)
+                }
+        )
+        return binding.root
     }
 }

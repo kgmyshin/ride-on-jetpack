@@ -9,6 +9,8 @@ class Todo(
         private var done: Boolean
 ) : Entity<TodoId>(id) {
 
+    fun hasDone() = done
+
     fun done() {
         done = true
     }
