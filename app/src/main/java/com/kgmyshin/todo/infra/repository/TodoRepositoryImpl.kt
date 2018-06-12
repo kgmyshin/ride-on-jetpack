@@ -26,7 +26,6 @@ class TodoRepositoryImpl(
     }
 
     override fun findAllByPage(page: Int): Single<List<Todo>> = if (pageCache[page] == null) {
-
         todoApiClient.getTodoList(page)
                 .map { TodoConverter.convertToModel(it) }
                 .doOnSuccess {

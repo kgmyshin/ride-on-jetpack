@@ -54,6 +54,10 @@ class TodoListViewModel(
                             ?: return@doOnSubscribe
                     val target = snapshot.find { it.id == todoId } ?: return@doOnSubscribe
                     snapshot[snapshot.indexOf(target)] = target.copy(done = true)
+                    snapshot.set(
+                            snapshot.indexOf(target),
+                            target.copy(done = true)
+                    )
                     snapshotTodoList.value = snapshot
                 }
                 .subscribeBy(
@@ -75,6 +79,10 @@ class TodoListViewModel(
                             ?: return@doOnSubscribe
                     val target = snapshot.find { it.id == todoId } ?: return@doOnSubscribe
                     snapshot[snapshot.indexOf(target)] = target.copy(done = false)
+                    snapshot.set(
+                            snapshot.indexOf(target),
+                            target.copy(done = false)
+                    )
                     snapshotTodoList.value = snapshot
                 }
                 .subscribeBy(

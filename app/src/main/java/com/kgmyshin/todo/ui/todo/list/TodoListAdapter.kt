@@ -8,6 +8,9 @@ import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 
 class TodoListAdapter : PagedListAdapter<TodoBindingModel, TodoViewHolder>(DIFF_ITEM_CALL_BACK) {
 
+    var onTodoClickListener: OnTodoClickListener? = null
+    var onToggleDoneListener: OnToggleDoneListener? = null
+
     override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
@@ -17,9 +20,14 @@ class TodoListAdapter : PagedListAdapter<TodoBindingModel, TodoViewHolder>(DIFF_
             false
     )
 
-
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        getItem(position)?.let { holder.bindTo(it) }
+        getItem(position)?.let {
+            holder.bindTo(
+                    it,
+                    onTodoClickListener,
+                    onToggleDoneListener
+            )
+        }
     }
 
     companion object {

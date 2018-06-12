@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.kgmyshin.todo.databinding.FragmentTodoListBinding
 import com.kgmyshin.todo.injector.Injectors
+import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 
 class TodoListFragment : Fragment() {
 
@@ -32,7 +33,18 @@ class TodoListFragment : Fragment() {
                 this,
                 factory
         ).get(TodoListViewModel::class.java)
-        val adapter = TodoListAdapter()
+        val adapter = TodoListAdapter().apply {
+            onTodoClickListener = object : OnTodoClickListener {
+                override fun onClick(bindingModel: TodoBindingModel) {
+                    viewModel.done(bindingModel.id)
+                }
+            }
+            onToggleDoneListener = object : OnToggleDoneListener {
+                override fun onToggle(onOff: Boolean, bindingModel: TodoBindingModel) {
+                    viewModel.undone(bindingModel.id)
+                }
+            }
+        }
         binding.recyclerView.adapter = adapter
         viewModel.todoList.observe(
                 this,
