@@ -6,8 +6,9 @@ import com.kgmyshin.todo.domain.repository.ReadOnlyTodoRepository
 import com.kgmyshin.todo.usecase.todo.DoneTodoUseCase
 import com.kgmyshin.todo.usecase.todo.UndoneTodoUseCase
 import io.reactivex.Scheduler
+import javax.inject.Inject
 
-class TodoListViewModelFactory(
+class TodoListViewModelFactory @Inject constructor(
         private val readOnlyTodoRepository: ReadOnlyTodoRepository,
         private val doneTodoUseCase: DoneTodoUseCase,
         private val undoneTodoUseCase: UndoneTodoUseCase,

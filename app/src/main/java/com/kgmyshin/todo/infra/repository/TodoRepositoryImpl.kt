@@ -7,8 +7,11 @@ import com.kgmyshin.todo.domain.TodoId
 import com.kgmyshin.todo.domain.repository.TodoRepository
 import io.reactivex.Maybe
 import io.reactivex.Single
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class TodoRepositoryImpl(
+@Singleton
+class TodoRepositoryImpl @Inject constructor(
         private val todoApiClient: TodoApiClient
 ) : TodoRepository {
 

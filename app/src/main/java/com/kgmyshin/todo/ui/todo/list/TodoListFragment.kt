@@ -1,7 +1,7 @@
 package com.kgmyshin.todo.ui.todo.list
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +11,19 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmyshin.todo.databinding.FragmentTodoListBinding
-import com.kgmyshin.todo.injector.Injectors
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
+import dagger.android.support.AndroidSupportInjection
+import javax.inject.Inject
 
 class TodoListFragment : Fragment() {
+
+    @Inject
+    lateinit var todoListViewModelFactory: TodoListViewModelFactory
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -26,15 +35,9 @@ class TodoListFragment : Fragment() {
                 container,
                 false
         )
-        val factory = TodoListViewModelFactory(
-                readOnlyTodoRepository = Injectors.readOnlyRepository,
-                doneTodoUseCase = Injectors.doneTodoUseCase,
-                undoneTodoUseCase = Injectors.undoneTodoUseCase,
-                uiScheduler = Injectors.uiScheduler
-        )
         val viewModel = ViewModelProviders.of(
                 this,
-                factory
+                todoListViewModelFactory
         ).get(TodoListViewModel::class.java)
         val adapter = TodoListAdapter().apply {
             onClickTodoClickListener = object : OnClickTodoClickListener {
