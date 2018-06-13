@@ -2,10 +2,9 @@ package com.kgmyshin.todo.ui.todo.list
 
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 
-interface OnToggleDoneListener {
+interface OnClickUndoneTodoListener {
 
-    fun onToggle(
-            onOff: Boolean,
+    fun onClick(
             bindingModel: TodoBindingModel
     )
 

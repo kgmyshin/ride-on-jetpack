@@ -26,18 +26,19 @@ class TodoViewHolder private constructor(
 
     fun bindTo(
             bindingModel: TodoBindingModel,
-            onTodoClickListener: OnTodoClickListener?,
-            onToggleDoneListener: OnToggleDoneListener?
+            onClickTodoClickListener: OnClickTodoClickListener?,
+            onClickDoneTodoListener: OnClickDoneTodoListener?,
+            onClickUndoneTodoListener: OnClickUndoneTodoListener?
     ) {
         binding.bindingModel = bindingModel
-        binding.doneCheckBox.setOnCheckedChangeListener { _, checked ->
-            onToggleDoneListener?.onToggle(
-                    checked,
-                    bindingModel
-            )
+        binding.doneButton.setOnClickListener {
+            onClickDoneTodoListener?.onClick(bindingModel)
+        }
+        binding.undoneButton.setOnClickListener {
+            onClickUndoneTodoListener?.onClick(bindingModel)
         }
         binding.root.setOnClickListener {
-            onTodoClickListener?.onClick(bindingModel)
+            onClickTodoClickListener?.onClick(bindingModel)
         }
         binding.executePendingBindings()
     }

@@ -19,8 +19,9 @@ class TodoListViewModelFactory(
             TodoListViewModel(
                     doneTodoUseCase = doneTodoUseCase,
                     undoneTodoUseCase = undoneTodoUseCase,
-                    pagedKeyedTodoDataSourceFactory = PageKeyedTodoDataSourceFactory(
-                            readOnlyTodoRepository
+                    todoListLiveDataFactory = TodoListLiveDataFactory(
+                            readOnlyTodoRepository,
+                            uiScheduler
                     ),
                     uiScheduler = uiScheduler
             ) as T

@@ -2,14 +2,15 @@ package com.kgmyshin.todo.ui.todo.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 
-class TodoListAdapter : PagedListAdapter<TodoBindingModel, TodoViewHolder>(DIFF_ITEM_CALL_BACK) {
+class TodoListAdapter : ListAdapter<TodoBindingModel, TodoViewHolder>(DIFF_ITEM_CALL_BACK) {
 
-    var onTodoClickListener: OnTodoClickListener? = null
-    var onToggleDoneListener: OnToggleDoneListener? = null
+    var onClickTodoClickListener: OnClickTodoClickListener? = null
+    var onClickDoneTodoListener: OnClickDoneTodoListener? = null
+    var onClickUndoneTodoListener: OnClickUndoneTodoListener? = null
 
     override fun onCreateViewHolder(
             parent: ViewGroup,
@@ -24,8 +25,9 @@ class TodoListAdapter : PagedListAdapter<TodoBindingModel, TodoViewHolder>(DIFF_
         getItem(position)?.let {
             holder.bindTo(
                     it,
-                    onTodoClickListener,
-                    onToggleDoneListener
+                    onClickTodoClickListener,
+                    onClickDoneTodoListener,
+                    onClickUndoneTodoListener
             )
         }
     }

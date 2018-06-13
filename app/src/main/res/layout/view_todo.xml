@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="bindingModel"
             type="com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel" />
@@ -26,14 +28,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="タイトル" />
 
-        <CheckBox
-            android:id="@+id/done_check_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="@{bindingModel.done}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
@@ -42,6 +36,24 @@
             app:layout_constraintStart_toStartOf="@id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。" />
+
+        <Button
+            android:id="@+id/done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="done"
+            android:visibility="@{bindingModel.done ? View.INVISIBLE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/undone_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="undone"
+            android:visibility="@{bindingModel.done ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.ConstraintLayout>
 </layout>

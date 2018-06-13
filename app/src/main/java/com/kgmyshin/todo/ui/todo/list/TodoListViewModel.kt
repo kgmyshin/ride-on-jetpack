@@ -1,12 +1,7 @@
 package com.kgmyshin.todo.ui.todo.list
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import com.kgmyshin.todo.domain.TodoId
-import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 import com.kgmyshin.todo.usecase.todo.DoneTodoUseCase
 import com.kgmyshin.todo.usecase.todo.UndoneTodoUseCase
 import io.reactivex.Scheduler
@@ -17,55 +12,33 @@ import io.reactivex.rxkotlin.subscribeBy
 class TodoListViewModel(
         private val doneTodoUseCase: DoneTodoUseCase,
         private val undoneTodoUseCase: UndoneTodoUseCase,
-        pagedKeyedTodoDataSourceFactory: PageKeyedTodoDataSourceFactory,
+        todoListLiveDataFactory: TodoListLiveDataFactory,
         private val uiScheduler: Scheduler
 ) : ViewModel() {
 
-    companion object {
-        private const val PAGE_SIZE = 5
-    }
-
     private val disposables = CompositeDisposable()
 
-    private val originalTodoList = LivePagedListBuilder(
-            pagedKeyedTodoDataSourceFactory,
-            PagedList.Config.Builder()
-                    .setInitialLoadSizeHint(PAGE_SIZE)
-                    .setPageSize(PAGE_SIZE)
-                    .build()
-    ).build()
+    val todoList = todoListLiveDataFactory.create()
 
-    private val snapshotTodoList = MutableLiveData<PagedList<TodoBindingModel>>()
-
-    val todoList = MediatorLiveData<PagedList<TodoBindingModel>>().apply {
-        addSource(originalTodoList, { newValue ->
-            value = newValue
-        })
-        addSource(snapshotTodoList, { newValue ->
-            value = newValue
-        })
+    fun readMore() {
+        todoList.readMore()
     }
 
     fun done(todoId: TodoId) {
         doneTodoUseCase.execute(todoId)
                 .subscribeOn(uiScheduler)
                 .doOnSubscribe {
-                    val snapshot = (originalTodoList.value?.snapshot() as? PagedList<TodoBindingModel>)
-                            ?: return@doOnSubscribe
-                    val target = snapshot.find { it.id == todoId } ?: return@doOnSubscribe
-                    snapshot[snapshot.indexOf(target)] = target.copy(done = true)
-                    snapshot.set(
-                            snapshot.indexOf(target),
-                            target.copy(done = true)
+                    changeDoneOfTodoItem(
+                            todoId,
+                            true
                     )
-                    snapshotTodoList.value = snapshot
                 }
                 .subscribeBy(
-                        onSuccess = {
-                            originalTodoList.value?.dataSource?.invalidate()
-                        },
                         onError = {
-                            originalTodoList.value?.dataSource?.invalidate()
+                            changeDoneOfTodoItem(
+                                    todoId,
+                                    false
+                            )
                         }
                 )
                 .addTo(disposables)
@@ -75,25 +48,36 @@ class TodoListViewModel(
         undoneTodoUseCase.execute(todoId)
                 .subscribeOn(uiScheduler)
                 .doOnSubscribe {
-                    val snapshot = (originalTodoList.value?.snapshot() as? PagedList<TodoBindingModel>)
-                            ?: return@doOnSubscribe
-                    val target = snapshot.find { it.id == todoId } ?: return@doOnSubscribe
-                    snapshot[snapshot.indexOf(target)] = target.copy(done = false)
-                    snapshot.set(
-                            snapshot.indexOf(target),
-                            target.copy(done = false)
+                    changeDoneOfTodoItem(
+                            todoId,
+                            false
                     )
-                    snapshotTodoList.value = snapshot
                 }
                 .subscribeBy(
-                        onSuccess = {
-                            originalTodoList.value?.dataSource?.invalidate()
-                        },
                         onError = {
-                            originalTodoList.value?.dataSource?.invalidate()
+                            changeDoneOfTodoItem(
+                                    todoId,
+                                    true
+                            )
                         }
                 )
                 .addTo(disposables)
+    }
+
+    private fun changeDoneOfTodoItem(
+            todoId: TodoId,
+            done: Boolean
+    ) {
+        val snapshot = todoList.value ?: return
+        val target = todoList.value?.find { it.id == todoId } ?: return
+        todoList.value = snapshot.toMutableList().apply {
+            set(
+                    snapshot.indexOf(target),
+                    target.copy(
+                            done = done
+                    )
+            )
+        }
     }
 
     override fun onCleared() {

@@ -31,11 +31,9 @@ class TodoViewModel(
                     .doOnSubscribe {
                         todoLiveData.value = todo.copy(done = true)
                     }
-                    .doOnError {
-                        todoLiveData.value = todo.copy(done = false)
-                    }
                     .subscribeBy(
                             onError = {
+                                todoLiveData.value = todo.copy(done = false)
                                 TODO("エラーハンドリング")
                             }
                     )
@@ -53,11 +51,9 @@ class TodoViewModel(
                     .doOnSubscribe {
                         todoLiveData.value = todo.copy(done = false)
                     }
-                    .doOnError {
-                        todoLiveData.value = todo.copy(done = true)
-                    }
                     .subscribeBy(
                             onError = {
+                                todoLiveData.value = todo.copy(done = true)
                                 TODO("エラーハンドリング")
                             }
                     )
