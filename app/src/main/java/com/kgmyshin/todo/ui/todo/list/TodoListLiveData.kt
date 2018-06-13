@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.kgmyshin.todo.domain.repository.ReadOnlyTodoRepository
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoConverter
+import com.kgmyshin.todo.util.rx.sequence
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -37,16 +38,30 @@ class TodoListLiveData(
 
     override fun onActive() {
         super.onActive()
-        readOnlyTodoRepository.findAllByPage(0)
-                .subscribeOn(uiScheduler)
-                .subscribeBy(
-                        onSuccess = { todoList ->
-                            value = TodoConverter.convertToBindingModel(todoList)
-                        },
-                        onError = {
-                            TODO("エラーハンドリング")
-                        }
-                )
+        if (lastPage == 0) {
+            readOnlyTodoRepository.findAllByPage(0)
+                    .subscribeOn(uiScheduler)
+                    .subscribeBy(
+                            onSuccess = { todoList ->
+                                value = TodoConverter.convertToBindingModel(todoList)
+                            },
+                            onError = {
+                                TODO("エラーハンドリング")
+                            }
+                    )
+        } else {
+            (0..lastPage).map { page ->
+                readOnlyTodoRepository.findAllByPage(page)
+            }.sequence().subscribeOn(uiScheduler)
+                    .subscribeBy(
+                            onSuccess = {
+                                value = TodoConverter.convertToBindingModel(it.flatten())
+                            },
+                            onError = {
+                                TODO("エラーハンドリング")
+                            }
+                    )
+        }
 
     }
 

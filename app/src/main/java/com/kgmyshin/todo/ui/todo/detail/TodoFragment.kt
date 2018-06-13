@@ -34,6 +34,7 @@ class TodoFragment : Fragment() {
                 factory
         ).get(TodoViewModel::class.java)
         binding.viewModel = viewModel
+        binding.setLifecycleOwner(this)
         return binding.root
     }
 }
