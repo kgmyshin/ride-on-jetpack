@@ -19,7 +19,7 @@
         android:label="detail">
         <argument
             android:name="id"
-            app:type="string" />
+            app:argType="string" />
     </fragment>
 
 
