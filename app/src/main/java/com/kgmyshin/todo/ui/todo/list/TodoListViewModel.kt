@@ -1,7 +1,8 @@
 package com.kgmyshin.todo.ui.todo.list
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.kgmyshin.todo.domain.TodoId
+import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 import com.kgmyshin.todo.usecase.todo.DoneTodoUseCase
 import com.kgmyshin.todo.usecase.todo.UndoneTodoUseCase
 import io.reactivex.Scheduler
@@ -16,12 +17,29 @@ class TodoListViewModel(
         private val uiScheduler: Scheduler
 ) : ViewModel() {
 
+    private val mutableTodoList = todoListLiveDataFactory.create()
     private val disposables = CompositeDisposable()
 
-    val todoList = todoListLiveDataFactory.create()
+    private val filterWord: MutableLiveData<String> = MutableLiveData()
+    private val filteredTodoList: LiveData<List<TodoBindingModel>> = Transformations.map(filterWord) { word ->
+        mutableTodoList.value?.filter { it.description.contains(word) } ?: listOf()
+    }
+
+    val todoList: LiveData<List<TodoBindingModel>> = MediatorLiveData<List<TodoBindingModel>>().apply {
+        addSource(mutableTodoList) {
+            value = it
+        }
+        addSource(filteredTodoList) {
+            value = it
+        }
+    }
+
+    fun filter(filterWord: String?) {
+        this.filterWord.value = filterWord
+    }
 
     fun readMore() {
-        todoList.readMore()
+        mutableTodoList.readMore()
     }
 
     fun done(todoId: TodoId) {
@@ -68,9 +86,9 @@ class TodoListViewModel(
             todoId: TodoId,
             done: Boolean
     ) {
-        val snapshot = todoList.value ?: return
-        val target = todoList.value?.find { it.id == todoId } ?: return
-        todoList.value = snapshot.toMutableList().apply {
+        val snapshot = mutableTodoList.value ?: return
+        val target = mutableTodoList.value?.find { it.id == todoId } ?: return
+        mutableTodoList.value = snapshot.toMutableList().apply {
             set(
                     snapshot.indexOf(target),
                     target.copy(

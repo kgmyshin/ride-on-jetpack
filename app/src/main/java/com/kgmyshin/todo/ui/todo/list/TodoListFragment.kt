@@ -2,14 +2,14 @@ package com.kgmyshin.todo.ui.todo.list
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.kgmyshin.todo.R
 import com.kgmyshin.todo.databinding.FragmentTodoListBinding
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 import dagger.android.support.AndroidSupportInjection
@@ -20,9 +20,16 @@ class TodoListFragment : Fragment() {
     @Inject
     lateinit var todoListViewModelFactory: TodoListViewModelFactory
 
+    private lateinit var todoListViewModel: TodoListViewModel
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         AndroidSupportInjection.inject(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -35,7 +42,7 @@ class TodoListFragment : Fragment() {
                 container,
                 false
         )
-        val viewModel = ViewModelProviders.of(
+        todoListViewModel = ViewModelProviders.of(
                 this,
                 todoListViewModelFactory
         ).get(TodoListViewModel::class.java)
@@ -48,12 +55,12 @@ class TodoListFragment : Fragment() {
             }
             onClickDoneTodoListener = object : OnClickDoneTodoListener {
                 override fun onClick(bindingModel: TodoBindingModel) {
-                    viewModel.done(bindingModel.id)
+                    todoListViewModel.done(bindingModel.id)
                 }
             }
             onClickUndoneTodoListener = object : OnClickUndoneTodoListener {
                 override fun onClick(bindingModel: TodoBindingModel) {
-                    viewModel.undone(bindingModel.id)
+                    todoListViewModel.undone(bindingModel.id)
                 }
             }
         }
@@ -66,16 +73,38 @@ class TodoListFragment : Fragment() {
                 super.onScrollStateChanged(recyclerView, newState)
                 val lastIndex = binding.recyclerView.adapter?.itemCount
                 if (!recyclerView.canScrollHorizontally(RecyclerView.VERTICAL) && lastIndex != 0) {
-                    viewModel.readMore()
+                    todoListViewModel.readMore()
                 }
             }
         })
-        viewModel.todoList.observe(
+        todoListViewModel.todoList.observe(
                 this,
                 Observer { bindingModelList ->
                     adapter.submitList(bindingModelList)
                 }
         )
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(
+            menu: Menu?,
+            inflater: MenuInflater?
+    ) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater?.inflate(
+                R.menu.menu_search,
+                menu
+        )
+        (menu?.findItem(R.id.action_search)?.actionView as? SearchView)?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                todoListViewModel.filter(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                todoListViewModel.filter(newText)
+                return false
+            }
+        })
     }
 }
