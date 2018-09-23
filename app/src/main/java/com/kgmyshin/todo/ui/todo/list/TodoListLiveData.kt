@@ -31,7 +31,7 @@ class TodoListLiveData(
                             }
                         },
                         onError = {
-                            TODO("エラーハンドリング")
+                            // TODO: エラーハンドリング
                         }
                 )
     }
@@ -46,7 +46,7 @@ class TodoListLiveData(
                                 value = TodoConverter.convertToBindingModel(todoList)
                             },
                             onError = {
-                                TODO("エラーハンドリング")
+                                // TODO: エラーハンドリング
                             }
                     )
         } else {
@@ -58,7 +58,7 @@ class TodoListLiveData(
                                 value = TodoConverter.convertToBindingModel(it.flatten())
                             },
                             onError = {
-                                TODO("エラーハンドリング")
+                                // TODO: エラーハンドリング
                             }
                     )
         }

@@ -34,7 +34,7 @@ class TodoViewModel(
                     .subscribeBy(
                             onError = {
                                 todoLiveData.value = todo.copy(done = false)
-                                TODO("エラーハンドリング")
+                                // TODO: エラーハンドリング
                             }
                     )
                     .addTo(disposables)
@@ -43,7 +43,7 @@ class TodoViewModel(
 
     fun undone() {
         todoLiveData.value?.let { todo ->
-            if (todo.done) {
+            if (!todo.done) {
                 return
             }
             undoneTodoUseCase.execute(todo.id)
@@ -54,7 +54,7 @@ class TodoViewModel(
                     .subscribeBy(
                             onError = {
                                 todoLiveData.value = todo.copy(done = true)
-                                TODO("エラーハンドリング")
+                                // TODO: エラーハンドリング
                             }
                     )
                     .addTo(disposables)

@@ -31,12 +31,12 @@ class TodoRepositoryImpl @Inject constructor(
     override fun findAllByPage(page: Int): Single<List<Todo>> = if (pageCache[page] == null) {
         todoApiClient.getTodoList(page)
                 .map { TodoConverter.convertToModel(it) }
-                .doOnSuccess {
+                .doOnSuccess { todo ->
                     pageCache.put(
                             page,
-                            it
+                            todo
                     )
-                    it.forEach {
+                    todo.forEach {
                         idCache.put(it.id, it)
                     }
                 }

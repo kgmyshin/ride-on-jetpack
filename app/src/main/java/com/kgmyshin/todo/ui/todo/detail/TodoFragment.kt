@@ -39,6 +39,12 @@ class TodoFragment : Fragment() {
                 this,
                 factory
         ).get(TodoViewModel::class.java)
+        binding.doneButton.setOnClickListener {
+            viewModel.done()
+        }
+        binding.undoneButton.setOnClickListener {
+            viewModel.undone()
+        }
         binding.viewModel = viewModel
         binding.setLifecycleOwner(this)
         return binding.root
