@@ -1,6 +1,7 @@
 package com.kgmyshin.todo
 
 import com.kgmyshin.todo.api.TodoApiClient
+import com.kgmyshin.todo.infra.repository.ErrorLiveDataFactory
 import com.kgmyshin.todo.infra.repository.InfraModule
 import com.kgmyshin.todo.usecase.UseCaseModule
 import dagger.Module
@@ -23,5 +24,9 @@ class AppModule {
     @Singleton
     @Provides
     fun provideTodoApiClient(): TodoApiClient = TodoApiClient()
+
+    @Singleton
+    @Provides
+    fun provideErrorLiveDataFactory(): ErrorLiveDataFactory = ErrorLiveDataFactory()
 
 }

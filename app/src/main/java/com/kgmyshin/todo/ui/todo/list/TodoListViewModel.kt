@@ -2,6 +2,7 @@ package com.kgmyshin.todo.ui.todo.list
 
 import androidx.lifecycle.*
 import com.kgmyshin.todo.domain.TodoId
+import com.kgmyshin.todo.infra.repository.ErrorLiveData
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 import com.kgmyshin.todo.usecase.todo.DoneTodoUseCase
 import com.kgmyshin.todo.usecase.todo.UndoneTodoUseCase
@@ -14,7 +15,8 @@ class TodoListViewModel(
         private val doneTodoUseCase: DoneTodoUseCase,
         private val undoneTodoUseCase: UndoneTodoUseCase,
         todoListLiveDataFactory: TodoListLiveDataFactory,
-        private val uiScheduler: Scheduler
+        private val uiScheduler: Scheduler,
+        val errorLiveData: ErrorLiveData
 ) : ViewModel() {
 
     private val mutableTodoList = todoListLiveDataFactory.create()
@@ -57,6 +59,7 @@ class TodoListViewModel(
                                     todoId,
                                     false
                             )
+                            errorLiveData.value = it
                         }
                 )
                 .addTo(disposables)
@@ -77,6 +80,7 @@ class TodoListViewModel(
                                     todoId,
                                     true
                             )
+                            errorLiveData.value = it
                         }
                 )
                 .addTo(disposables)

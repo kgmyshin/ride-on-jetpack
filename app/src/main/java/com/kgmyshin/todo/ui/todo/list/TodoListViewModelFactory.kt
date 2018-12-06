@@ -3,6 +3,7 @@ package com.kgmyshin.todo.ui.todo.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.kgmyshin.todo.domain.repository.ReadOnlyTodoRepository
+import com.kgmyshin.todo.infra.repository.ErrorLiveDataFactory
 import com.kgmyshin.todo.usecase.todo.DoneTodoUseCase
 import com.kgmyshin.todo.usecase.todo.UndoneTodoUseCase
 import io.reactivex.Scheduler
@@ -12,6 +13,7 @@ class TodoListViewModelFactory @Inject constructor(
         private val readOnlyTodoRepository: ReadOnlyTodoRepository,
         private val doneTodoUseCase: DoneTodoUseCase,
         private val undoneTodoUseCase: UndoneTodoUseCase,
+        private val errorLiveDataFactory: ErrorLiveDataFactory,
         private val uiScheduler: Scheduler
 ) : ViewModelProvider.NewInstanceFactory() {
 

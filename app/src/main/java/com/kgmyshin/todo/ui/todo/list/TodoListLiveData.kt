@@ -2,6 +2,7 @@ package com.kgmyshin.todo.ui.todo.list
 
 import androidx.lifecycle.MutableLiveData
 import com.kgmyshin.todo.domain.repository.ReadOnlyTodoRepository
+import com.kgmyshin.todo.infra.repository.ErrorLiveData
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoConverter
 import com.kgmyshin.todo.util.rx.sequence
@@ -11,7 +12,8 @@ import io.reactivex.rxkotlin.subscribeBy
 
 class TodoListLiveData(
         private val readOnlyTodoRepository: ReadOnlyTodoRepository,
-        private val uiScheduler: Scheduler
+        private val uiScheduler: Scheduler,
+        private val errorLiveData: ErrorLiveData
 ) : MutableLiveData<List<TodoBindingModel>>() {
 
     private val disposables = CompositeDisposable()
@@ -31,7 +33,7 @@ class TodoListLiveData(
                             }
                         },
                         onError = {
-                            // TODO: エラーハンドリング
+                            errorLiveData.value = it
                         }
                 )
     }
@@ -46,7 +48,7 @@ class TodoListLiveData(
                                 value = TodoConverter.convertToBindingModel(todoList)
                             },
                             onError = {
-                                // TODO: エラーハンドリング
+                                errorLiveData.value = it
                             }
                     )
         } else {
@@ -58,7 +60,7 @@ class TodoListLiveData(
                                 value = TodoConverter.convertToBindingModel(it.flatten())
                             },
                             onError = {
-                                // TODO: エラーハンドリング
+                                errorLiveData.value = it
                             }
                     )
         }
