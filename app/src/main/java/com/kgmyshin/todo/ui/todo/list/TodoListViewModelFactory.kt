@@ -24,8 +24,10 @@ class TodoListViewModelFactory @Inject constructor(
                     undoneTodoUseCase = undoneTodoUseCase,
                     todoListLiveDataFactory = TodoListLiveDataFactory(
                             readOnlyTodoRepository,
-                            uiScheduler
+                            uiScheduler,
+                            errorLiveData = errorLiveDataFactory.create()
                     ),
-                    uiScheduler = uiScheduler
+                    uiScheduler = uiScheduler,
+                    errorLiveData = errorLiveDataFactory.create()
             ) as T
 }

@@ -7,7 +7,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.kgmyshin.todo.R
+import com.kgmyshin.todo.databinding.FragmentTodoListBinding
 import com.kgmyshin.todo.ui.todo.bindingModel.TodoBindingModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
